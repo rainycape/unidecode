@@ -4,15 +4,14 @@
 package unidecode
 
 import (
+	"sync"
 	"unicode"
-
-	"gopkgs.com/pool.v1"
 )
 
 const pooledCapacity = 64
 
 var (
-	slicePool = pool.New(0)
+	slicePool sync.Pool
 )
 
 // Unidecode implements a unicode transliterator, which
