@@ -11,7 +11,8 @@ import (
 const pooledCapacity = 64
 
 var (
-	slicePool sync.Pool
+	slicePool    sync.Pool
+	decodingOnce sync.Once
 )
 
 // Unidecode implements a unicode transliterator, which
@@ -22,14 +23,7 @@ var (
 // with their closest ASCII counterparts.
 // e.g. Unicode("áéíóú") => "aeiou"
 func Unidecode(s string) string {
-	if !decoded {
-		mutex.Lock()
-		if !decoded {
-			decodeTransliterations()
-			decoded = true
-		}
-		mutex.Unlock()
-	}
+	decodingOnce.Do(decodeTransliterations)
 	l := len(s)
 	var r []rune
 	if l > pooledCapacity {
